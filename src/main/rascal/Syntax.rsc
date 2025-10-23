@@ -7,7 +7,7 @@ lexical WhitespaceAndComment = [\ \t\n\r] | @category="Comment" "#" ![\n]* $;
 lexical INTEGER = [0-9]+;
 lexical FLOAT   = [0-9]+ "." [0-9]+;
 lexical BOOLEAN = "true" | "false";
-lexical CHAR    = "'" ![\'\n] "'";
+lexical CHAR    = "\'" ![\'\n] "\'";
 lexical STRING  = "\"" ![\"\n]* "\"";
 
 lexical IDENT   = [a-zA-Z][a-zA-Z0-9_]* \ Reserved;
@@ -24,7 +24,7 @@ start syntax Program = program: Module* ;
 
 // ===== MÓDULOS =====
 syntax Module
-  = func:     "function" IDENT "(" [Param {","}] ")" Block "end"
+  = func:     "function" IDENT "(" [Param {\',\'}] ")" Block "end"
   | dataDecl: "data" IDENT "=" TypeDecl "end"
   | stmt:     Stmt
   ;
@@ -37,9 +37,9 @@ syntax Block = block: Stmt* ;
 // ===== SENTENCIAS =====
 syntax Stmt
   = assign: IDENT "=" Expr
-  | cond:   "if" Expr "then" Block ["else" Block] "end"
+  | cond:   "if" Expr "then" Block [\'else\' Block] "end"
   | loop:   "for" IDENT "in" Expr "do" Block "end"
-  | callS:  IDENT "(" [Expr {","}] ")"
+  | callS:  IDENT "(" [Expr {\",\"}] ")"
   ;
 
 // ===== EXPRESIONES =====
@@ -47,25 +47,25 @@ syntax Expr
   = bin:  Expr Op Expr
   | neg:  "neg" Expr
   | id:   IDENT
-  | int:  INTEGER
+  | intType: INTEGER
   | fl:   FLOAT
-  | bool: BOOLEAN
-  | str:  STRING
-  | call: IDENT "(" [Expr {","}] ")"
+  | boolType: BOOLEAN
+  | strType:  STRING
+  | call: IDENT "(" [Expr {\",\"}] ")"
   ;
 
 syntax Op
   = add: "+"  | sub: "-" | mul: "*"  | div: "/"
-  | pow: "**" | mod: "%"
-  | lt:  "<"  | gt:  ">" | le: "<=" | ge: ">="
-  | eq:  "="  | ne:  "<>"
+  | pow: "**" | mdl: "%"
+  | lt:  "\<"  | gt:  "\>" | le: "\<=" | ge: "\>="
+  | eq:  "="  | ne:  "\<\>"
   | and: "and" | or: "or"
   ;
 
 // ===== TIPOS =====
 syntax TypeDecl
   = struct: "struct" "{" Field* "}"
-  | tuple:  "tuple" "(" [TypeDecl {","}] ")"
+  | tupleType:  "tuple" "(" [TypeDecl {\",\"}] ")"
   | basic:  IDENT
   ;
 
