@@ -1,24 +1,37 @@
 module AST
 
-data Planning    = planning(list[PersonTasks] personList);
-data PersonTasks = personTasks(str name, list[Task] tasks);
-data Task        = task(Action action, int prio, list[Duration] duration);
-data Duration    = duration(int dl, TimeUnit unit);
+data Program = program(list[Module] modules);
 
-data Action =
-    lunch(LunchAction lunchAction)
-  | meeting(MeetingAction meetingAction)
-  | paper(PaperAction paperAction)
-  | payment(PaymentAction paymentAction);
+data Module = func(str name, list[Param] params, Block body)
+            | dataDecl(str name, TypeDecl typeDecl)
+            | stmt(Stmt statement);
 
-data LunchAction   = lunchAction(str location);
-data MeetingAction = meetingAction(str topic);
-data PaperAction   = paperAction(str report);
-data PaymentAction = paymentAction(int amount);
+data Param = param(str name);
 
-data TimeUnit = minute(Minute) | hour(Hour) | day(Day) | week(Week);
-data Minute = minute();
-data Hour   = hour();
-data Day    = day();
-data Week   = week();
+data Block = block(list[Stmt] stmts);
 
+data Stmt = assign(str var, Expr expr)
+          | cond(Expr condition, Block thenBlock, list[Block] elseBlock)
+          | loop(str iterator, Expr range, Block body)
+          | callS(str name, list[Expr] args);
+
+data Expr = bin(Expr left, Op op, Expr right)
+          | neg(Expr expr)
+          | id(str name)
+          | intLit(int valor)
+          | floatLit(real valor)
+          | boolLit(bool valor)
+          | strLit(str valor)
+          | call(str name, list[Expr] args);
+
+data Op = add() | sub() | mul() | div()
+        | pow() | mdl()
+        | lt() | gt() | le() | ge()
+        | eq() | ne()
+        | and() | or();
+
+data TypeDecl = struct(list[Field] fields)
+              | tupleType(list[TypeDecl] types)
+              | basic(str typeName);
+
+data Field = field(str name, TypeDecl fieldType);
